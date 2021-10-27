@@ -1,10 +1,16 @@
 const logRequest = (req, res, next) => {
-    console.log("Request Method: ", req.mwthod);
-    console.log("Request Method: ", req.mwthod);
-    console.log("Request Method: ", req.mwthod);
-    console.log("Request Method: ", req.mwthod);
-    console.log("Request Method: ", req.mwthod);
-    console.log("Request Method: ", req.mwthod);
-    console.log("Request : ", req.body);
+    console.log("Request Method: ", req.method);
+    console.log("Request URL: ", req.originalUrl);
+    console.log("Request Time: ", new Date().toLocaleString());
+    console.log("Request IP: ", req.ip);
+    console.log("Request Headers: ", req.headers);
+    console.log("Request Body: ", req.body);
     console.log("Request host: ", req.hostname);
-}
+    // console.log (
+    //     `${req.method} ${req.protocol}://${req.get("host")} ${req.originalUser}`
+    // );
+    // console.log(`${req.method} ${req.url}`);
+    next();
+    
+};
+module.exports = logRequest;
