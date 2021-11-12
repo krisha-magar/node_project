@@ -6,7 +6,7 @@ const app = express();
 const route = require("./routes");
 const logMiddleware = require("./middleware/logger");
 
-
+app.set ("view engine", "ejs");
 
 app.use(bodyParser.json());
 

@@ -1,60 +1,39 @@
 const express = require("express");
 const router = express.Router();
-const {getAllUser, store, getById, update} = require("../controller/user-controller");
-const {getAll, addHobby} = require("../controller/hobby-controller")
+const {
+  getAllUser, 
+  store,
+  getById,
+  update,
+  destroy,
+  login,
+  profile,
+} = require("../controller/user-controller");
+//const {getAll, addHobby} = require("../controller/hobby-controller")
 const UserValidator =  require("../validator/user-validator");
 const CatchValidationError = require("../handler/validation-error-handler");
-const loginValidator = require("../validator/login-validator");
+const LoginValidator = require("../validator/login-validator");
+const verifyToken = require("../middleware/auth");
+const ObjectIdCheck = require("../middleware/object-id-check");
 
-
-router.post("/login", )
+router.post("/login", LoginValidator, CatchValidationError(login));
 //get all users, Request Method: Get
-router.get("/users", getAllUser);
+router.get("/users", verifyToken, getAllUser);
   
 // create new user, Request Method: Post
-router.post("/users", UserValidator, CatchValidationError(store));
+router.post("/register", UserValidator, CatchValidationError(store));
   
-  // get user by id, Request Method: Get
- router.get("/users/:id", getById);
+//get user profile, Request Method: Get
+router.get("/profile", verifyToken, profile); 
 
- router.post("/users/:id" , UserValidator, CatchValidationError(update) );
-  
-  // //update user
-  // router.put("/users/:id",(req, res) => {
-  //   let userIndex = users.findIndex((user) => user.id === parseInt(req.params.id));
-  //   // // to know the index 
-  //   // res.json({
-  //   //   index: userIndex,
-  //   // })
-  //   if(userIndex === -1) {
-  //     return res.status(404).json({
-  //       error: "The user with the given id was not found",
-  //     });
-  //   }
-  //   //users[userIndex] = req.body;
-  //   users[userIndex]["name"] = req.body.name;
-  //   users[userIndex]["email"] = req.body.email;
-  //   users[userIndex]["address"] = req.body.address;
-  //   res.json(req.body)
-  // });
-  
-  // //delete user by
-  // router.delete("/users/:id",(req, res) => {
-  //   let userIndex = users.findIndex(
-  //     (user) => user.id === parseInt(req.params.id)
-  //   );
-  //   if (userIndex === -1) {
-  //     return res.status(404).json({
-  //       error: "The user with the given ID was not found",
-  //     });
-  //   }
-  //   users.splice(userIndex, 1);
-  //   res.status(204).json({message: "The user has been deleted"});
-  
-  // });
+// get user by id, Request Method: Get 
+ router.get("/users/:id",[verifyToken, ObjectIdCheck], getById);
 
-  // router.get("/hobby", getAll);
-  // router.post("/hobby", HobbyController.Hobby);
+ // update user by id, Request Method: Put
+ router.put("/users/:id" ,ObjectIdCheck, UserValidator, CatchValidationError(update) );
+  
+ //delete user by id, Request Method: Delete
+ router.delete("/users/:id", verifyToken, destroy);
 
   module.exports = router;
   

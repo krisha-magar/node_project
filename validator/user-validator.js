@@ -1,6 +1,7 @@
 const { checkSchema } = require("express-validator");
-const mongoose = require ('mongoose');
-const User = mongoose.model('User')
+const mongoose = require("mongoose");
+const User = mongoose.model("User");
+
 const UserValidator = checkSchema({
   email: {
     isLength: {
@@ -12,33 +13,30 @@ const UserValidator = checkSchema({
     },
     trim: true,
     custom: {
-        options: async (value,{req, location, path }) => {
-            console.log(req.method);
-            let user;
-            if(req.method == "PUT") {
-                user = await User.findOne({
-                    $and : [{
-                        _id: {
-                            $ne: req.params.id,
-                       },
-                    },
-                    {
-                        email: value
-                    }  
-                    ],
-
-                });
-
-            } else {
-               user = await User.findOne({email : value});
-
-            }
-            //const user = User.findOne(filter);
-            if (user){
-                throw new Error("Email is already taken");
-            }
-            return true;
-        },
+      options: async (value, { req, location, path }) => {
+        let filter = {};
+        if (req.method == "PUT") {
+          filter = {
+            $and: [
+              {
+                _id: {
+                  $ne: mongoose.Types.ObjectId(req.params.id),
+                },
+              },
+              {
+                email: value,
+              },
+            ],
+          };
+        } else {
+          filter = { email: value };
+        }
+        const user = await User.findOne(filter);
+        if (user) {
+          throw new Error("Email is already taken!");
+        }
+        return true;
+      },
     },
   },
   password: {
@@ -82,4 +80,4 @@ const UserValidator = checkSchema({
   },
 });
 
- module.exports = UserValidator;
+module.exports = UserValidator;

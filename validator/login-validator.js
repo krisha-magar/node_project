@@ -12,10 +12,12 @@ const loginValidator = checkSchema({
       trim: true,
     },
     password: {
-      trim: true,
       isLength: {
         options: { min: 6, max: 100 },
-        errorMessage:
-          "Password is required and must be of minimum length of 6 characters.",
+        errorMessage: "Password is required and must be of minimum length of 6 characters.",
       },
-    }
+      trim: true,
+    },
+});
+
+module.exports = loginValidator;
