@@ -1,6 +1,6 @@
 const {checkSchema} = require ("express-validator");
 
-const loginValidator = checkSchema({
+const LoginValidator = checkSchema({
     email: {
       isLength: {
         options: { min: 1, max: 255 },
@@ -20,4 +20,4 @@ const loginValidator = checkSchema({
     },
 });
 
-module.exports = loginValidator;
+module.exports = LoginValidator;
