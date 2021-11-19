@@ -1,46 +1,52 @@
 require("dotenv").config();
-require('./config/database');
+require("./config/database");
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 const apiRoute = require("./routes/api");
 const webRoute = require("./routes/web");
 const session = require("express-session");
-const cookieParser = require("cookie-parser"); 
-const flash = require ("connect-flash");
-//const logMiddleware = require("./middleware/logger");
+const cookieParser = require("cookie-parser");
+const flash = require("connect-flash");
+// const logMiddleware = require("./middleware/logger");
 
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 app.use(bodyParser.json());
 
-app.set ("view engine", "ejs");
-
+app.set("view engine", "ejs");
 
 app.use(cookieParser());
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     name: "session",
-    resave: false,
+    resave: true,
     saveUninitialized: true,
-    cookie: { secure: true },
+    // cookie: { secure: true },
   })
 );
-
-//middleware
-//app.use(logMiddleware);
 app.use(flash());
 
 app.use((req, res, next) => {
-  res.locals.alert = req.flash('alert');
+  res.locals.alert = req.flash("alert")[0];
+  res.locals.errors = req.flash("errors")[0] || {};
+  res.locals.oldInput = req.flash("oldInput")[0] || {};
+  res.locals.user = req.session && req.session.user ? req.session.user : null;
+  res.locals.isLogged = req.session && req.session.isLogged ? true : false;
   res.locals.flash = req.flash();
   next();
-})
-app.use("/web", webRoute);
-app.use("/api", apiRoute);
+});
 
+//middleware
+// app.use(logMiddleware);
+app.use(express.static('public'))
+
+app.use("/", webRoute);
+app.use("/api", apiRoute);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

@@ -11,4 +11,4 @@ const ObjectIdCheck = (req, res, next) => {
 
 };
 
-module.eports = ObjectIdCheck;
+module.exports = ObjectIdCheck;

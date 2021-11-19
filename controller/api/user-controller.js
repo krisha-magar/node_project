@@ -8,11 +8,11 @@ const profile = (req, res) => {
     let user= {...req.user.toJSON()};
     delete user.password;
     res.json(user);
-}
+};
 const getAllUser = async (req, res) => {
     const users = await User.find();
     res.json(users);
-} 
+};
 
 const store = async (req, res) => {
     const user = await create(req.body);
@@ -53,11 +53,11 @@ const destroy = async (req, res) => {
 const login = async (req, res) => {
     const user = await User.findOne({email: req.body.email});
     if(!user){
-        return res.status(401).json ({error: "Inavalid error or password" });
+        return res.status(401).json ({error: "Inavalid email or password" });
     }
     const matchPassword = await bcrypt.compare(req.body.password, user.password);
     if(!matchPassword){
-        return res.status(401).json ({error: "Inavalid error or password" });
+        return res.status(401).json ({error: "Inavalid email or password" });
     }
     const token = jwt.sign({id: user._id, email: user.email}, process.env.SECRET_KEY, {
         expiresIn: "1 h"
